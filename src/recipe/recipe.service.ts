@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Recipe } from './schemas/recipe.schema';
@@ -21,6 +21,12 @@ export class RecipeService {
 	}
 
 	async findById(id: string): Promise<Recipe> {
+		const isValidId = mongoose.isValidObjectId(id);
+
+		if (!isValidId) {
+			throw new BadRequestException('ID inválido.');
+		}
+
 		const recipe = await this.recipeModel.findById(id);
 
 		if (!recipe) {
@@ -31,13 +37,37 @@ export class RecipeService {
 	}
 
 	async updateById(id: string, recipe: Recipe): Promise<Recipe> {
-		return await this.recipeModel.findByIdAndUpdate(id, recipe, {
+		const isValidId = mongoose.isValidObjectId(id);
+
+		if (!isValidId) {
+			throw new BadRequestException('ID inválido.');
+		}
+
+		const updatedRecipe = await this.recipeModel.findByIdAndUpdate(id, recipe, {
 			new: true,
 			runValidators: true
 		});
+
+		if (!updatedRecipe) {
+			throw new NotFoundException('Receita não encontrada.');
+		}
+
+		return updatedRecipe;
 	}
 
 	async deleteById(id: string): Promise<Recipe> {
-		return await this.recipeModel.findByIdAndDelete(id);
+		const isValidId = mongoose.isValidObjectId(id);
+
+		if (!isValidId) {
+			throw new BadRequestException('ID inválido.');
+		}
+
+		const deletedRecipe = await this.recipeModel.findByIdAndDelete(id);
+
+		if (!deletedRecipe) {
+			throw new NotFoundException('Receita não encontrada.');
+		}
+
+		return deletedRecipe;
 	}
 }
