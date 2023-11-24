@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
 import { Recipe } from './schemas/recipe.schema';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class RecipeService {
