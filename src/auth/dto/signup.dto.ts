@@ -1,20 +1,20 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class SignUpDto {
-	@IsNotEmpty()
-	@IsString()
+	@IsNotEmpty({ message: 'O campo name não pode estar vazio.' })
+	@IsString({ message: 'O campo name está esperando uma string.' })
 	readonly name: string;
 
-	@IsNotEmpty()
-	@IsEmail({}, { message: 'Digite um e-mail válido.' })
+	@IsNotEmpty({ message: 'O campo email não pode estar vazio.' })
+	@IsEmail({}, { message: 'O campo email está esperando um email.' })
 	readonly email: string;
 
-	@IsNotEmpty()
-	@IsString()
-	@MinLength(8)
+	@IsNotEmpty({ message: 'O campo password não pode estar vazio.' })
+	@IsString({ message: 'O campo passsword está esperando uma string.' })
+	@MinLength(8, { message: 'O campo password deve ter no mínimo 8 caracteres.' })
 	readonly password: string;
 
 	@IsOptional()
-	@IsString()
+	@IsString({ message: 'O campo role está esperando uma string.' })
 	readonly role: string;
 }
