@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
@@ -15,15 +15,32 @@ export class AuthService {
 		private jwtService: JwtService
 	) {}
 
+	async validateUserById(id: any): Promise<User | null> {
+		try {
+			const user = await this.userModel.findById(id).exec();
+			console.log('User:', user);
+			return user || null;
+		} catch (error) {
+			console.error('Error in validateUserById:', error);
+			return null;
+		}
+	}
+
 	async signUp(signUpDto: SignUpDto): Promise<{ token: string }> {
-		const { name, email, password, role } = signUpDto;
+		const { name, email, password } = signUpDto;
+
+		// Verifica se o email já existe
+		const existingUser = await this.userModel.findOne({ email });
+		if (existingUser) {
+			throw new BadRequestException('Este email já está em uso.');
+		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		const user = await this.userModel.create({
 			name,
 			email,
-			role,
+			role: 'user', // Define o campo 'Role' como 'user'
 			password: hashedPassword
 		});
 
@@ -38,16 +55,23 @@ export class AuthService {
 		const user = await this.userModel.findOne({ email });
 
 		if (!user) {
-			throw new UnauthorizedException('E-mail ou senha inválido.');
+			throw new UnauthorizedException('E-mail ou senha incorretos');
 		}
 
 		const isPasswordMatched = await bcrypt.compare(password, user.password);
 
 		if (!isPasswordMatched) {
-			throw new UnauthorizedException('E-mail ou senha inválido.');
+			throw new UnauthorizedException('E-mail ou senha incorretos');
 		}
 
-		const token = this.jwtService.sign({ id: user._id });
+		// Configurar o payload do token JWT
+		const payload = {
+			id: user._id,
+			email: user.email,
+			role: user.role
+		};
+
+		const token = this.jwtService.sign(payload);
 
 		return { token };
 	}

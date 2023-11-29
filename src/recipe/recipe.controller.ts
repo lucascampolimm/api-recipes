@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { Recipe } from './schemas/recipe.schema';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('recipes')
 export class RecipeController {
@@ -14,6 +15,7 @@ export class RecipeController {
 	}
 
 	@Post()
+	@UseGuards(AuthGuard('jwt'))
 	async createRecipe(
 		@Body()
 		recipe: CreateRecipeDto

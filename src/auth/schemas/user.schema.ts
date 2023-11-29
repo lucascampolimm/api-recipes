@@ -13,7 +13,7 @@ export class User {
 	@Prop()
 	name: string;
 
-	@Prop()
+	@Prop({ default: 'user' }) // Defina 'user' como valor padrão
 	role: string;
 }
 
