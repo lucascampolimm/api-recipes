@@ -18,10 +18,8 @@ export class AuthService {
 	async validateUserById(id: any): Promise<User | null> {
 		try {
 			const user = await this.userModel.findById(id).exec();
-			console.log('User:', user);
 			return user || null;
 		} catch (error) {
-			console.error('Error in validateUserById:', error);
 			return null;
 		}
 	}

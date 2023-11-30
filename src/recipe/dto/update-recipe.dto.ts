@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateRecipeDto {
 	@IsOptional()
@@ -16,8 +16,4 @@ export class UpdateRecipeDto {
 	@IsOptional()
 	@IsString({ message: 'O campo imageUrl está esperando uma string.' })
 	readonly imageUrl: string;
-
-	@IsOptional()
-	@IsNumber({}, { message: 'O campo idAuthor está esperando um number.' })
-	readonly idAuthor: number;
 }
