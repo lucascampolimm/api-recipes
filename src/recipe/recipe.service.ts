@@ -1,5 +1,10 @@
 // recipe.service.ts
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+	UnauthorizedException
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Recipe } from './schemas/recipe.schema';
 import * as mongoose from 'mongoose';
@@ -48,10 +53,25 @@ export class RecipeService {
 		return recipe;
 	}
 
-	async updateById(id: string, recipeDto: UpdateRecipeDto): Promise<Recipe> {
+	async updateById(userId: string, id: string, recipeDto: UpdateRecipeDto): Promise<Recipe> {
+		// Verificar se a receita pertence ao usuário logado
+		const existingRecipe = await this.recipeModel.findById(id);
+
+		if (!existingRecipe) {
+			throw new NotFoundException('Receita não encontrada.');
+		}
+
+		// Logs para depurar
+
+		// Converter o authorId para string antes da comparação
+		if (existingRecipe?.authorId?.toString() !== userId) {
+			throw new UnauthorizedException('Você não tem permissão para editar esta receita.');
+		}
+
+		// Atualizar a receita
 		const updatedRecipe = await this.recipeModel.findByIdAndUpdate(
 			id,
-			{ $set: recipeDto }, // Use $set para atualizar apenas os campos fornecidos
+			{ $set: recipeDto },
 			{ new: true, runValidators: true }
 		);
 

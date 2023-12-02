@@ -39,8 +39,14 @@ export class RecipeController {
 
 	@Put(':id')
 	@UseGuards(AuthGuard('jwt'))
-	async updateRecipe(@Param('id') id: string, @Body() recipe: UpdateRecipeDto): Promise<Recipe> {
-		return this.recipeService.updateById(id, recipe);
+	async updateRecipe(
+		@Request() req,
+		@Param('id') id: string,
+		@Body() recipe: UpdateRecipeDto
+	): Promise<Recipe> {
+		const userId = req.user.id; // Ajuste aqui
+
+		return this.recipeService.updateById(userId, id, recipe);
 	}
 
 	@Delete(':id')
