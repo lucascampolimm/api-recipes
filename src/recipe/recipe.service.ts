@@ -1,6 +1,7 @@
 // recipe.service.ts
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException
@@ -82,11 +83,18 @@ export class RecipeService {
 		return updatedRecipe;
 	}
 
-	async deleteById(id: string): Promise<Recipe> {
-		const isValidId = mongoose.isValidObjectId(id);
+	async deleteById(userId: string, id: string): Promise<Recipe> {
+		const existingRecipe = await this.recipeModel.findById(id);
 
-		if (!isValidId) {
-			throw new BadRequestException('ID inválido.');
+		if (!existingRecipe) {
+			throw new NotFoundException('Receita não encontrada.');
+		}
+
+		// Adicionando logs para depuração
+
+		// Verifique se o usuário tem permissão para excluir a receita
+		if (existingRecipe.authorId.toString() !== userId) {
+			throw new ForbiddenException('Você não tem permissão para excluir esta receita.');
 		}
 
 		const deletedRecipe = await this.recipeModel.findByIdAndDelete(id);

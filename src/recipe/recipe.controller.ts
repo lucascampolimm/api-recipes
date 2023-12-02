@@ -50,7 +50,9 @@ export class RecipeController {
 	}
 
 	@Delete(':id')
-	async deleteRecipe(@Param('id') id: string): Promise<Recipe> {
-		return this.recipeService.deleteById(id);
+	@UseGuards(AuthGuard('jwt'))
+	async deleteRecipe(@Request() req, @Param('id') id: string): Promise<Recipe> {
+		const userId = req.user.id; // Ajuste aqui
+		return this.recipeService.deleteById(userId, id);
 	}
 }
