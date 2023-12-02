@@ -16,7 +16,7 @@ export class Recipe extends Document {
 	preparationMethod: string;
 
 	@Prop()
-	imageUrl: string;
+	image: string;
 
 	@Prop({ type: Types.ObjectId, ref: 'User' }) // Adicione a referência ao esquema de usuário
 	authorId: Types.ObjectId;

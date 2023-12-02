@@ -19,13 +19,12 @@ export class RecipeService {
 		private recipeModel: mongoose.Model<Recipe>
 	) {}
 	async createRecipe(userId: string, recipeDto: CreateRecipeDto): Promise<Recipe> {
-		const { name, ingredients, preparationMethod, imageUrl } = recipeDto;
+		const { name, ingredients, preparationMethod } = recipeDto;
 
 		const recipeWithAuthor = {
 			name,
 			ingredients,
 			preparationMethod,
-			imageUrl,
 			authorId: userId
 		};
 
@@ -104,5 +103,30 @@ export class RecipeService {
 		}
 
 		return deletedRecipe;
+	}
+	async addImageToRecipe(userId: string, id: string, image: any): Promise<Recipe> {
+		console.log('UserID:', userId);
+		console.log('RecipeID:', id);
+
+		const existingRecipe = await this.recipeModel.findById(id);
+
+		console.log('Existing Recipe:', existingRecipe);
+
+		if (!existingRecipe) {
+			throw new NotFoundException('Receita não encontrada.');
+		}
+
+		if (!existingRecipe.authorId || existingRecipe.authorId.toString() !== userId) {
+			console.log('Permission Denied');
+			throw new ForbiddenException('Você não tem permissão para editar esta receita.');
+		}
+
+		console.log('Permission Granted');
+
+		existingRecipe.image = image.filename;
+
+		const updatedRecipe = await existingRecipe.save();
+
+		return updatedRecipe;
 	}
 }

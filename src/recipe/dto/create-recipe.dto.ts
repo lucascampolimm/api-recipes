@@ -13,8 +13,4 @@ export class CreateRecipeDto {
 	@IsNotEmpty({ message: 'O campo preparationMethod não pode estar vazio.' })
 	@IsString({ message: 'O campo preparationMethod está esperando uma string.' })
 	readonly preparationMethod: string;
-
-	@IsNotEmpty({ message: 'O campo imageUrl não pode estar vazio.' })
-	@IsString({ message: 'O campo imageUrl está esperando uma string.' })
-	readonly imageUrl: string;
 }

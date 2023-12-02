@@ -8,13 +8,17 @@ import {
 	Post,
 	Put,
 	UseGuards,
-	Request
+	Request,
+	UseInterceptors,
+	UploadedFile
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { Recipe } from './schemas/recipe.schema';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('recipes')
 export class RecipeController {
@@ -54,5 +58,16 @@ export class RecipeController {
 	async deleteRecipe(@Request() req, @Param('id') id: string): Promise<Recipe> {
 		const userId = req.user.id; // Ajuste aqui
 		return this.recipeService.deleteById(userId, id);
+	}
+	@Post(':id/image')
+	@UseGuards(AuthGuard('jwt'))
+	@UseInterceptors(FileInterceptor('image', { storage: diskStorage({}) }))
+	async addImageToRecipe(
+		@Request() req,
+		@Param('id') id: string,
+		@UploadedFile() image
+	): Promise<Recipe> {
+		const userId = req.user.id; // Use 'id' em vez de 'userId'
+		return this.recipeService.addImageToRecipe(userId, id, image);
 	}
 }
