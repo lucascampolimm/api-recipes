@@ -61,7 +61,18 @@ export class RecipeController {
 	}
 	@Post(':id/image')
 	@UseGuards(AuthGuard('jwt'))
-	@UseInterceptors(FileInterceptor('image', { storage: diskStorage({}) }))
+	@UseInterceptors(
+		FileInterceptor('image', {
+			storage: diskStorage({
+				destination: './imagens',
+				filename: (req, file, callback) => {
+					const recipeId = req.params.id;
+					const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+					callback(null, `${recipeId}-${uniqueSuffix}.jpeg`);
+				}
+			})
+		})
+	)
 	async addImageToRecipe(
 		@Request() req,
 		@Param('id') id: string,

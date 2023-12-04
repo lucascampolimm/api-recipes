@@ -105,27 +105,23 @@ export class RecipeService {
 		return deletedRecipe;
 	}
 	async addImageToRecipe(userId: string, id: string, image: any): Promise<Recipe> {
-		console.log('UserID:', userId);
-		console.log('RecipeID:', id);
-
 		const existingRecipe = await this.recipeModel.findById(id);
-
-		console.log('Existing Recipe:', existingRecipe);
 
 		if (!existingRecipe) {
 			throw new NotFoundException('Receita não encontrada.');
 		}
 
 		if (!existingRecipe.authorId || existingRecipe.authorId.toString() !== userId) {
-			console.log('Permission Denied');
 			throw new ForbiddenException('Você não tem permissão para editar esta receita.');
 		}
 
-		console.log('Permission Granted');
+		// Adicione a URL da imagem à receita
+		existingRecipe.image = `http://your-server.com/uploads/${image.filename}`;
 
-		existingRecipe.image = image.filename;
-
-		const updatedRecipe = await existingRecipe.save();
+		// Salve a receita atualizada no banco de dados
+		const updatedRecipe = await this.recipeModel.findByIdAndUpdate(id, existingRecipe, {
+			new: true
+		});
 
 		return updatedRecipe;
 	}
