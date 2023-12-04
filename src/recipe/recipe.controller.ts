@@ -1,14 +1,15 @@
 // recipe.controller.ts
 import {
-	Body,
 	Controller,
-	Delete,
 	Get,
 	Param,
+	Res,
 	Post,
-	Put,
 	UseGuards,
 	Request,
+	Body,
+	Put,
+	Delete,
 	UseInterceptors,
 	UploadedFile
 } from '@nestjs/common';
@@ -19,6 +20,8 @@ import { Recipe } from './schemas/recipe.schema';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { Response } from 'express';
+import * as path from 'path';
 
 @Controller('recipes')
 export class RecipeController {
@@ -28,7 +31,10 @@ export class RecipeController {
 	async getAllRecipes(): Promise<Recipe[]> {
 		return this.recipeService.findAll();
 	}
-
+	@Get(':id/image')
+	async serveImage(@Param('id') id: string, @Res() res: Response) {
+		res.sendFile(id, { root: path.join(process.cwd(), 'imagens') });
+	}
 	@Post()
 	@UseGuards(AuthGuard('jwt'))
 	async createRecipe(@Request() req, @Body() recipe: CreateRecipeDto): Promise<Recipe> {

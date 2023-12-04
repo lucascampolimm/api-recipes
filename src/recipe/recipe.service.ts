@@ -116,7 +116,7 @@ export class RecipeService {
 		}
 
 		// Adicione a URL da imagem à receita
-		existingRecipe.image = `http://your-server.com/uploads/${image.filename}`;
+		existingRecipe.image = `${image.filename}`;
 
 		// Salve a receita atualizada no banco de dados
 		const updatedRecipe = await this.recipeModel.findByIdAndUpdate(id, existingRecipe, {

@@ -10,8 +10,7 @@ import * as path from 'path';
 				destination: path.resolve(__dirname, '..', 'src', 'imagens'),
 				filename: (req, file, callback) => {
 					const recipeId = req.params.id;
-					const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-					callback(null, `${recipeId}-${uniqueSuffix}.jpeg`);
+					callback(null, `${recipeId}.jpeg`);
 				}
 			})
 		})
