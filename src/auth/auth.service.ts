@@ -27,10 +27,9 @@ export class AuthService {
 	async signUp(signUpDto: SignUpDto): Promise<{ token: string }> {
 		const { name, email, password } = signUpDto;
 
-		// Verifica se o email já existe
 		const existingUser = await this.userModel.findOne({ email });
 		if (existingUser) {
-			throw new BadRequestException('Este email já está em uso.');
+			throw new BadRequestException('Este e-mail já está em uso.');
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,7 +37,7 @@ export class AuthService {
 		const user = await this.userModel.create({
 			name,
 			email,
-			role: 'user', // Define o campo 'Role' como 'user'
+			role: 'user',
 			password: hashedPassword
 		});
 
@@ -53,16 +52,15 @@ export class AuthService {
 		const user = await this.userModel.findOne({ email });
 
 		if (!user) {
-			throw new UnauthorizedException('E-mail ou senha incorretos');
+			throw new UnauthorizedException('E-mail ou senha incorretos.');
 		}
 
 		const isPasswordMatched = await bcrypt.compare(password, user.password);
 
 		if (!isPasswordMatched) {
-			throw new UnauthorizedException('E-mail ou senha incorretos');
+			throw new UnauthorizedException('E-mail ou senha incorretos.');
 		}
 
-		// Configurar o payload do token JWT
 		const payload = {
 			id: user._id,
 			email: user.email,

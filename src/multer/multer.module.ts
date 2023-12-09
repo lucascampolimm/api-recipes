@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
-// Adicione a configuração do Multer no módulo
+
 @Module({
 	imports: [
 		MulterModule.register({
@@ -15,6 +15,5 @@ import * as path from 'path';
 			})
 		})
 	]
-	// ...
 })
 export class YourModule {}

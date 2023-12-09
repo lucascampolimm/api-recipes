@@ -18,7 +18,7 @@ export class AuthController {
 			const result = await this.authService.login(loginDto);
 			return result;
 		} catch (error) {
-			throw new UnauthorizedException('E-mail ou senha incorretos');
+			throw new UnauthorizedException('E-mail ou senha incorretos.');
 		}
 	}
 }

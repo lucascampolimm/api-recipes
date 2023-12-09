@@ -1,4 +1,3 @@
-// recipe.service.ts
 import {
 	BadRequestException,
 	ForbiddenException,
@@ -54,21 +53,16 @@ export class RecipeService {
 	}
 
 	async updateById(userId: string, id: string, recipeDto: UpdateRecipeDto): Promise<Recipe> {
-		// Verificar se a receita pertence ao usuário logado
 		const existingRecipe = await this.recipeModel.findById(id);
 
 		if (!existingRecipe) {
 			throw new NotFoundException('Receita não encontrada.');
 		}
 
-		// Logs para depurar
-
-		// Converter o authorId para string antes da comparação
 		if (existingRecipe?.authorId?.toString() !== userId) {
 			throw new UnauthorizedException('Você não tem permissão para editar esta receita.');
 		}
 
-		// Atualizar a receita
 		const updatedRecipe = await this.recipeModel.findByIdAndUpdate(
 			id,
 			{ $set: recipeDto },
@@ -89,9 +83,6 @@ export class RecipeService {
 			throw new NotFoundException('Receita não encontrada.');
 		}
 
-		// Adicionando logs para depuração
-
-		// Verifique se o usuário tem permissão para excluir a receita
 		if (existingRecipe.authorId.toString() !== userId) {
 			throw new ForbiddenException('Você não tem permissão para excluir esta receita.');
 		}
@@ -115,10 +106,8 @@ export class RecipeService {
 			throw new ForbiddenException('Você não tem permissão para editar esta receita.');
 		}
 
-		// Adicione a URL da imagem à receita
 		existingRecipe.image = `${image.filename}`;
 
-		// Salve a receita atualizada no banco de dados
 		const updatedRecipe = await this.recipeModel.findByIdAndUpdate(id, existingRecipe, {
 			new: true
 		});

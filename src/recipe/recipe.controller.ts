@@ -1,4 +1,3 @@
-// recipe.controller.ts
 import {
 	Controller,
 	Get,
@@ -38,7 +37,7 @@ export class RecipeController {
 	@Post()
 	@UseGuards(AuthGuard('jwt'))
 	async createRecipe(@Request() req, @Body() recipe: CreateRecipeDto): Promise<Recipe> {
-		const userId = req.user.id; // Obtenha o ID do usuário do token JWT
+		const userId = req.user.id;
 		return this.recipeService.createRecipe(userId, recipe);
 	}
 
@@ -54,7 +53,7 @@ export class RecipeController {
 		@Param('id') id: string,
 		@Body() recipe: UpdateRecipeDto
 	): Promise<Recipe> {
-		const userId = req.user.id; // Ajuste aqui
+		const userId = req.user.id;
 
 		return this.recipeService.updateById(userId, id, recipe);
 	}
@@ -62,7 +61,7 @@ export class RecipeController {
 	@Delete(':id')
 	@UseGuards(AuthGuard('jwt'))
 	async deleteRecipe(@Request() req, @Param('id') id: string): Promise<Recipe> {
-		const userId = req.user.id; // Ajuste aqui
+		const userId = req.user.id;
 		return this.recipeService.deleteById(userId, id);
 	}
 	@Post(':id/image')
@@ -83,7 +82,7 @@ export class RecipeController {
 		@Param('id') id: string,
 		@UploadedFile() image
 	): Promise<Recipe> {
-		const userId = req.user.id; // Use 'id' em vez de 'userId'
+		const userId = req.user.id;
 		return this.recipeService.addImageToRecipe(userId, id, image);
 	}
 }
