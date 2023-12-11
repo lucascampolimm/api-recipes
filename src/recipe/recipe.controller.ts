@@ -30,7 +30,7 @@ export class RecipeController {
 	async getAllRecipes(): Promise<Recipe[]> {
 		return this.recipeService.findAll();
 	}
-	@Get(':id/image')
+	@Get('images/:id')
 	async serveImage(@Param('id') id: string, @Res() res: Response) {
 		res.sendFile(id, { root: path.join(process.cwd(), 'imagens') });
 	}
